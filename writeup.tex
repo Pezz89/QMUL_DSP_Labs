@@ -149,8 +149,18 @@
 
     \section*{Section 2.5 Questions}
     \subsection*{Q1. What do you observe as $M$ increases?}
+    The output signal appears to be smoothed at increasing
+    amounts as values for $M$ increase.
     \subsection*{Q2. Why do you think you observe this ``thing''?}
+    Increasing $M$ increases the size of the ``slice'' of
+    signal averaged to form each samples in the output
+    signal. By averaging larger slices of signal to form the
+    output, output samples will deviate less from the
+    previous sample due to the increased similarity between
+    the consecutive slices. This causes the smoothing effect
+    observed.
     \subsection*{Q3. What is happening at the beginning of the averaged dataset, and why does it happen?}
+
     \subsection*{Q4. What happens to the running average when the peak period suddenly drops?}
     \subsection*{Q5. Are these drops preserved?}
     \subsection*{Q6. Are the wave trains more clear?}

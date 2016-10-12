@@ -1,0 +1,169 @@
+\documentclass[titlepage]{scrartcl}
+\usepackage{enumitem}
+\usepackage[british]{babel}
+\usepackage[style=apa, backend=biber]{biblatex}
+\DeclareLanguageMapping{british}{british-apa}
+\usepackage{url}
+\usepackage{float}
+\usepackage[labelformat=empty]{caption}
+\restylefloat{table}
+\usepackage{perpage}
+\MakePerPage{footnote}
+\usepackage{abstract}
+\usepackage{graphicx}
+% Create hyperlinks in bibliography
+\usepackage{hyperref}
+\usepackage{amsmath}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{blindtext}
+\setkomafont{disposition}{\normalfont\bfseries}
+
+\graphicspath{
+    {./resources/},
+}
+\addbibresource{~/Documents/library.bib}
+
+\newsavebox{\abstractbox}
+\renewenvironment{abstract}
+  {\begin{lrbox}{0}\begin{minipage}{\textwidth}
+   \begin{center}\normalfont\sectfont\abstractname\end{center}\quotation}
+  {\endquotation\end{minipage}\end{lrbox}%
+   \global\setbox\abstractbox=\box0 }
+
+\usepackage{etoolbox}
+\makeatletter
+\expandafter\patchcmd\csname\string\maketitle\endcsname
+  {\vskip\z@\@plus3fill}
+  {\vskip\z@\@plus2fill\box\abstractbox\vskip\z@\@plus1fill}
+  {}{}
+\makeatother
+
+\DeclareCiteCommand{\citeyearpar}
+    {}
+    {\mkbibparens{\bibhyperref{\printdate}}}
+    {\multicitedelim}
+    {}
+
+% MATLAB Code block stuff...
+\usepackage{color}
+\usepackage{listings}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+
+\lstset{language=Matlab,
+   keywords={break,case,catch,continue,else,elseif,end,for,function,
+      global,if,otherwise,persistent,return,switch,try,while},
+   basicstyle=\ttfamily,
+   keywordstyle=\color{blue},
+   commentstyle=\color{gray},
+   stringstyle=\color{dkgreen},
+   numbers=left,
+   numberstyle=\tiny\color{gray},
+   stepnumber=1,
+   numbersep=10pt,
+   backgroundcolor=\color{white},
+   tabsize=4,
+   showspaces=false,
+   showstringspaces=false}
+
+\begin{document}
+    \title{ECS707P Fundamentals of DSP}
+    \subtitle{\LARGE{Lab 1 Report}}
+    \author{Sam Perry - ec16039}
+
+    \maketitle
+
+    \section*{Section 2.1 Buoy data parsing function}
+    \begin{lstlisting}
+    % Declare a function that takes a signle argument (the
+    % file path) and returns a 'data' object containing the
+    % data parsed from the file object.  A count integer is
+    % also returned with the number of entries read from
+    % file.
+    function [data, count] = readbuoydata(datafile)
+
+        % Create a file object with the path provided by the
+        % 'datafile' variable
+        fid = fopen(datafile,'r');
+        % Read first two header lines of file so that they
+        % are ignored in processing below.
+        tline = fgetl(fid);
+        tline = fgetl(fid);
+
+        % Parse each line of the file from line 3 onwards
+        % and store in variable 'A' first argument specifies
+        % the file object.
+        % second arguments specifies the data type to expect
+        % for each of the 10 elements per line.
+        % the third argument specifies to read 10 elements
+        % per line, and to read until the end of the file.
+        [A,count] = fscanf(fid, ...
+        '%d %d %d %d %d %f %f %d %f %f',[10 inf]);
+
+        % Creates a member of the data object that contains
+        % dates in the 'serial date number' format
+        data.date = datenum([A(1:5,:); zeros(1,size(A,2))]')';
+        data.Hs = A(6,:); % significant wave height
+        data.Tp = A(7,:); % peak period
+        data.Dp = A(8,:); % peak period direction
+        data.Ta = A(9,:); % average period
+        data.SST = A(10,:); % sea surface temperature
+
+        % Close the file 
+        fclose(fid);
+    \end{lstlisting}
+
+    \section*{Section 2.2 Peak Period and Wave Height Plots}
+
+    \begin{figure}[H]
+        \makebox[\textwidth]{\includegraphics[width=1.3\textwidth]{HeightPeriodPlot}}
+    \end{figure}
+
+    \section*{Section 2.3 Moving Average Filter Function}
+    \begin{lstlisting}
+    % Function takes an 1-dimensional input signal and
+    % an M value (>0) 
+    % A filtered signal of the same size is returned
+    function [outputSignal] = movingAverage(inputSignal, M)
+        % Initialize output array with zeros.
+        outputSignal = zeros(1, length(inputSignal));
+        % Pad input with zeros at the begining.
+        inputSignal = [zeros(1, M-1), inputSignal];
+
+        % For each sample in input...
+        for n = M:length(inputSignal)
+            % Take the last M samples and save their
+            % mean value as the output sample.
+            outputSignal(n-M+1) = mean(inputSignal(n-M+1:n));
+        end
+    \end{lstlisting}
+
+    \section*{Section 2.4 Filtered Peak Period Data Plots}
+    FIX Plot to show "(s)"
+    \begin{figure}[H]
+        \makebox[\textwidth]{\includegraphics[width=1.3\textwidth]{MovingAveragePlot}}
+    \end{figure}
+
+    \section*{Section 2.5 Questions}
+    \subsection*{Q1. What do you observe as $M$ increases?}
+    \subsection*{Q2. Why do you think you observe this ``thing''?}
+    \subsection*{Q3. What is happening at the beginning of the averaged dataset, and why does it happen?}
+    \subsection*{Q4. What happens to the running average when the peak period suddenly drops?}
+    \subsection*{Q5. Are these drops preserved?}
+    \subsection*{Q6. Are the wave trains more clear?}
+
+    \section*{Section 2.6 Filtered Wave Height Plots}
+    \begin{figure}[H]
+        \makebox[\textwidth]{\includegraphics[width=1.3\textwidth]{MovingAverageWavePlot}}
+    \end{figure}
+
+    \section*{Section 2.7 Questions}
+    \subsection*{Q1. Do you observe anything different in the plots from 2.6 to those you saw in 2.4?}
+    \subsection*{Q2. How does the size of this shift relate to M?}
+    \subsection*{Q3. Explain why the peaks move?}
+
+    % \printbibliography
+\end{document}

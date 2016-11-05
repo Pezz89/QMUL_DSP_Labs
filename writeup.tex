@@ -169,16 +169,14 @@ function hypothesis = calculate_hypothesis(X, theta, training_example)
 end
 \end{lstlisting}\leavevmode \\
 
-\begin{samepage}
 \subsection{Print the theta values found at the end of the optimization. Does anything surprise you?}
 The final values for $\theta$ were:\\
 $\theta = \big[ 340412.659574468, 110631.050278846, -6649.4742708198 \big]$\\
           
-The resulting values of $\theta$ were significantly larger (as was the overall
-cost) when using an extra feature than those for computing with only one
-feature:\\
-$\theta = \big[ -0.263203788443744, 0.82810187360801 \big]$
-\end{samepage}
+It is suprising that the $\theta$ value relating to the number of rooms is
+negative, suggesting that a house of a certain size tends to be worth less if
+it has a high quantity of rooms when compared to a house of similar size that
+has less.
 
 \subsection{How much does you algorithm predict that a house with 1650 sq. ft.
 and 3 bedrooms cost? How about 3000 sq. ft. and 4 bedrooms?}
@@ -261,12 +259,117 @@ the calculation of the hypothesis function. The results of $\alpha=1.2,
 
 \section{Logistic Regression}
 \subsection{In the \code{logistic\_regression} folder, fill out the
-\code{sigmoid(z)} function in \code{sigmoid.m}}
+    \code{sigmoid(z)} function in \code{sigmoid.m} and run
+\code{plot\_sigmoid\_function.m}}
+The sigmoid function was implemented as follows:\\
 \begin{lstlisting}
 function output=sigmoid(z)
     % Implement sigmoid function as shown in the sigmoid function formula.
     output = 1.0 ./ (1.0 + exp(1) .^ -z);
 \end{lstlisting}\leavevmode \\
+A plot of the output can then be seen in figure~\ref{sigmoid}
+\begin{figure}
+    \caption{$g(\theta^Tx)$}
+    \makebox[\textwidth]{\includegraphics[width=1\textwidth]{sigmoid}}
+    \label{sigmoid}
+\end{figure}
+
+\subsection{Run \code{plot\_data.m} to plot the data. Plot the data again to
+see what it looks like in this new format.}
+Plots of data pre-normalisation and post normalisation can be seen in
+figures~\ref{LRRawData} and~\ref{LRNormalisedData}
+
+\begin{figure}
+    \caption{Data (pre-normalisation)}
+    \makebox[\textwidth]{\includegraphics[width=1\textwidth]{LRRawData}}
+    \label{LRRawData}
+    \caption{Data (post-normalisation)}
+    \makebox[\textwidth]{\includegraphics[width=1\textwidth]{LRNormalisedData}}
+    \label{LRNormalisedData}
+\end{figure}
+
+\begin{minipage}{\linewidth}
+\subsection{Modify \code{calculate\_hypothesis} so that it returns the
+linear sum of the data weighted by $\theta$}
+\begin{lstlisting}
+function result=calculate_hypothesis(X,theta,training_example)
+    % Get the value for x at the training example index provided
+    x = X(training_example, 1:length(theta));
+
+    % Calcuate the Theta weighted sum of x
+    hypothesis = sum(x.*theta);
+
+    % Apply the sigmoid function to the result
+    result=sigmoid(hypothesis);
+\end{lstlisting}\leavevmode \\
+\end{minipage}
+
+\subsection{Modify the line \code{cost = 0.0} in \code{compute\_cost(X, y,
+theta)}...}
+This section appears to already have been completed correctly prior to any
+modifications. The completed code provided is as follows:
+
+\begin{lstlisting}
+function J=compute_cost(X, y, theta)
+    %
+    %Compute cost for linear regression. Takes an input matrix X of training
+    %examples, a parameter vector, theta, and an output vector y
+    %
+    J = 0.0; % cost
+    m = size(X,1); % no. training examples
+    for i=1:m
+        hypothesis = calculate_hypothesis(X,theta,i);
+        output = y(i);
+        cost = -output*log(hypothesis)-(1-output)*log(1-hypothesis);
+        % modify this to calculate the cost function, using hypothesis and output
+        %cost = 0.0;
+        J =J+cost;
+        
+    end
+    J = J*(1.0/m);
+    %END OF FUNCTION
+\end{lstlisting}\leavevmode \\
+
+\subsection{What is the final cost found by the gradient descent algorithm?}
+The final cost value calculate was found to be: 0.40545\\
+This is illustrated in figure~\ref{LRCostEx1}
+
+\begin{figure}
+    \caption{Cost over Iterations for Logistic Regression}
+    \makebox[\textwidth]{\includegraphics[width=1\textwidth]{LRCostEx1}}
+    \label{LRCostEx1}
+\end{figure}
+
+\subsection{Plot the decision boundary}
+The decision boundary was plotted as shown in figure~\ref{LRBoundary}
+
+\begin{figure}
+    \caption{Decision boundary}
+    \makebox[\textwidth]{\includegraphics[width=1\textwidth]{LRBoundary}}
+    \label{LRBoundary}
+\end{figure}
+
+\subsection{What is the difference between the training error and the test
+    error? When does the training set generalize well? Demonstrate a split with
+good and bad generalization.}
+The training error is the error produced when training the model on the
+training data. The test error is the error when applying the model created
+using the training data to the test data.
+The training set generalizes best when the set closely ressembles the test
+set's shape. This produces a function that will perform well on the test set
+and in theory on any new data. In this project, the best trained functions are
+created from data that is spread most equally in the training set, as this
+gives the best overall representation of the full dataset. this can be seen in
+figures 
+
+\begin{figure}
+    \caption{}
+    \makebox[\textwidth]{\includegraphics[width=1\textwidth]{LRRawData}}
+    \label{LRRawData}
+    \caption{Data (post-normalisation)}
+    \makebox[\textwidth]{\includegraphics[width=1\textwidth]{LRNormalisedData}}
+    \label{LRNormalisedData}
+\end{figure}
 
 % \printbibliography
 \end{document}

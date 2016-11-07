@@ -359,17 +359,34 @@ The training set generalizes best when the set closely ressembles the test
 set's shape. This produces a function that will perform well on the test set
 and in theory on any new data. In this project, the best trained functions are
 created from data that is spread most equally in the training set, as this
-gives the best overall representation of the full dataset. this can be seen in
-figures 
+gives the best overall representation of the full dataset. This can be seen in
+figures~\ref{4train} and~\ref{4test}. An example of poor generalization can be
+seen in figures~\ref{6train} and~\ref{6test}.
 
 \begin{figure}
-    \caption{}
-    \makebox[\textwidth]{\includegraphics[width=1\textwidth]{LRRawData}}
-    \label{LRRawData}
-    \caption{Data (post-normalisation)}
-    \makebox[\textwidth]{\includegraphics[width=1\textwidth]{LRNormalisedData}}
-    \label{LRNormalisedData}
+    \caption{Function generated on training data (error: 0.20109)}
+    \makebox[\textwidth]{\includegraphics[width=1\textwidth]{graph4a}}
+    \label{4train}
+    \caption{Function plotted agains test data (error: 0.49358)}
+    \makebox[\textwidth]{\includegraphics[width=1\textwidth]{graph4c}}
+    \label{4test}
 \end{figure}
+\begin{figure}
+    \caption{Function generated on training data (error: 0.18535)}
+    \makebox[\textwidth]{\includegraphics[width=1\textwidth]{graph6a}}
+    \label{6train}
+    \caption{Function plotted agains test data (error: 0.82162)}
+    \makebox[\textwidth]{\includegraphics[width=1\textwidth]{graph6c}}
+    \label{6test}
+\end{figure}
+
+\subsection{How does the error compare to using the original features}
+The error using the new features is 0.39537. This is marginally lower than the
+error computed using only the 2D linear features. This suggests that a
+non-linear boundary may better fit the data than the linear boundary used
+previously.
+
+
 
 % \printbibliography
 \end{document}

@@ -386,6 +386,59 @@ error computed using only the 2D linear features. This suggests that a
 non-linear boundary may better fit the data than the linear boundary used
 previously.
 
+\subsection{Show the effect of using sets of different sizes. What does it mean
+if the cost function of the training set goes down but the test set goes up?}
+Graphs of training and test cost can be found in
+figures~\ref{costTestTrain5},~\ref{costTestTrain10},~\ref{costTestTrain20},~\ref{costTestTrain40}
+and ~\ref{costTestTrain60}.
+A rise in error over iterations as the cost in training set decreases suggests
+that the training set bares little resemblance to the test set. This is shown
+clearly in~\ref{costTestTrain60}, where a large number of test data points
+minimizes the cost over the majority of the dataset, however this does not
+result in a good fit over the few remaining points used for testing.
+
+
+\begin{figure}
+    \caption{Training (blue)/Test (red) Error (Training: 5 data points, Test:
+    75 data points)}
+    \makebox[\textwidth]{\includegraphics[width=1\textwidth]{costTestTrain5}}
+    \label{costTestTrain5}
+    \caption{Training (blue)/Test (red) Error (Training: 10 data points, Test:
+    70 data points)}
+    \makebox[\textwidth]{\includegraphics[width=1\textwidth]{costtesttrain10}}
+    \label{costTestTrain10}
+\end{figure}
+\begin{figure}
+    \caption{Training (blue)/Test (red) Error (Training: 20 data points, Test:
+    60 data points)}
+    \makebox[\textwidth]{\includegraphics[width=1\textwidth]{costtesttrain20}}
+    \label{costTestTrain20}
+    \caption{Training (blue)/Test (red) Error (Training: 40 data points, Test:
+    40 data points)}
+    \makebox[\textwidth]{\includegraphics[width=1\textwidth]{costtesttrain40}}
+    \label{costTestTrain40}
+\end{figure}
+\begin{figure}
+    \caption{Training (blue)/Test (red) Error (Training: 60 data points, Test:
+    20 data points)}
+    \makebox[\textwidth]{\includegraphics[width=1\textwidth]{costtesttrain60}}
+    \label{costTestTrain60}
+\end{figure}
+
+\subsection{Explain why a logistic regression unit cannot solve the XOR
+classification problem}
+The XOR classification problem cannot be solved by logistic regression because
+it is ``Linearly inseperable''. This is to say that it is impossible to
+seperate classes in the decision space through use of a single line (as is used
+in logistic regression). This can be clearly demonstrated by attempting to
+seperate the two classes in figure~\ref{XOR} through use of a single line (it is not
+possible)
+
+\begin{figure}
+    \caption{Example of the XOR problem}
+    \makebox[\textwidth]{\includegraphics[width=1\textwidth]{XOR}}
+    \label{XOR}
+\end{figure}
 
 
 % \printbibliography

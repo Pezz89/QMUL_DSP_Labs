@@ -173,7 +173,7 @@ end
 The final values for $\theta$ were:\\
 $\theta = \big[ 340412.659574468, 110631.050278846, -6649.4742708198 \big]$\\
           
-It is suprising that the $\theta$ value relating to the number of rooms is
+It is surprising that the $\theta$ value relating to the number of rooms is
 negative, suggesting that a house of a certain size tends to be worth less if
 it has a high quantity of rooms when compared to a house of similar size that
 has less.
@@ -355,7 +355,7 @@ good and bad generalization.}
 The training error is the error produced when training the model on the
 training data. The test error is the error when applying the model created
 using the training data to the test data.
-The training set generalizes best when the set closely ressembles the test
+The training set generalizes best when the set closely resembles the test
 set's shape. This produces a function that will perform well on the test set
 and in theory on any new data. In this project, the best trained functions are
 created from data that is spread most equally in the training set, as this
@@ -367,7 +367,7 @@ seen in figures~\ref{6train} and~\ref{6test}.
     \caption{Function generated on training data (error: 0.20109)}
     \makebox[\textwidth]{\includegraphics[width=1\textwidth]{graph4a}}
     \label{4train}
-    \caption{Function plotted agains test data (error: 0.49358)}
+    \caption{Function plotted against test data (error: 0.49358)}
     \makebox[\textwidth]{\includegraphics[width=1\textwidth]{graph4c}}
     \label{4test}
 \end{figure}
@@ -375,7 +375,7 @@ seen in figures~\ref{6train} and~\ref{6test}.
     \caption{Function generated on training data (error: 0.18535)}
     \makebox[\textwidth]{\includegraphics[width=1\textwidth]{graph6a}}
     \label{6train}
-    \caption{Function plotted agains test data (error: 0.82162)}
+    \caption{Function plotted against test data (error: 0.82162)}
     \makebox[\textwidth]{\includegraphics[width=1\textwidth]{graph6c}}
     \label{6test}
 \end{figure}
@@ -395,7 +395,8 @@ A rise in error over iterations as the cost in training set decreases suggests
 that the training set bares little resemblance to the test set. This is shown
 clearly in~\ref{costTestTrain60}, where a large number of test data points
 minimizes the cost over the majority of the dataset, however this does not
-result in a good fit over the few remaining points used for testing.
+result in a good fit over the few remaining points used for testing. This is
+because overfitting around the training points has occurred.
 
 
 \begin{figure}
@@ -428,10 +429,10 @@ result in a good fit over the few remaining points used for testing.
 \subsection{Explain why a logistic regression unit cannot solve the XOR
 classification problem}
 The XOR classification problem cannot be solved by logistic regression because
-it is ``Linearly inseperable''. This is to say that it is impossible to
-seperate classes in the decision space through use of a single line (as is used
+it is ``Linearly inseparable''. This is to say that it is impossible to
+separate classes in the decision space through use of a single line (as is used
 in logistic regression). This can be clearly demonstrated by attempting to
-seperate the two classes in figure~\ref{XOR} through use of a single line (it is not
+separate the two classes in figure~\ref{XOR} through use of a single line (it is not
 possible)
 
 \begin{figure}
@@ -576,5 +577,43 @@ h_\Theta(x) &= \begin{bmatrix}
          \end{bmatrix}.
 \end{align}
 
-% \printbibliography
+\subsection{The Iris data set contains three different classes of data that we
+need to discriminate between. How would this be accomplished if we used a
+logistic regression unit? How is it different using a neural network?}
+One method for using logistic regression for multi-class classification is the
+``One-vs-all'' method. This works by training a classifier for each class
+individually. The result is that multiple classifiers (in this case 3) are used
+on any new input data to be classified. The data is then classified based on
+the classifier that returns the highest probability that the input is of the
+class associated with that classifier.~\parencite{ng2014}\\
+This method contrasts the neural network approach to classification as a single
+neural network is capable of being trained to differentiating between multiple classes
+simultaneously. During training, all paths to outputs are updated on each
+iteration to create a model that fits all outputs, rather than training each
+classifier in isolation.
+
+\subsection{What are the differences for each number of hidden neurons? Which
+number do you think is the best to use? How well do you think that we have
+generalized?}
+Error is higher for the lower numbers of neurons. The lack of complexity in the
+model results in a function that fits poorly to both the training and test set.
+As neurons increase, the error in training decreases dramatically, however a
+similar decrease is not seen in the test error. This is due to overfitting as
+the model fits test data very well but does not fit the test data to this
+degree. As a result, generalization is generally poor. The best results were
+found when using 7 neurons, and so this would be most likely be the optimal
+number of neurons to use.
+
+\begin{table}[H]
+\centering
+\caption{Test and Training Error for Number of Neurons}
+\label{my-label}
+\begin{tabular}{lllllll}
+No. Neurons    & 1       & 2       & 3       & 5       & 7       & 10      \\
+Training Error & 26.563  & 31.9923 & 26.5633 & 3.9679  & 0.42502 & 1.2144  \\
+Test Error     & 30.2045 & 31.5443 & 30.2043 & 13.1716 & 12.5509 & 15.3001
+\end{tabular}
+\end{table}
+
+\printbibliography
 \end{document}

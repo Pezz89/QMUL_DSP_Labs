@@ -514,19 +514,67 @@ h_\Theta(x) &= \begin{bmatrix}
            0.9882 \\
            0.98816 \\
            0.0094823
-         \end{bmatrix}
+         \end{bmatrix}.
 \end{align}
 
+The cost function for this output is shown in figure~\ref{LearnRate7}\\
 
+\begin{figure}
+    \caption{Cost function for $\alpha=7.0$}
+    \makebox[\textwidth]{\includegraphics[width=1\textwidth]{LearnRate7}}
+    \label{LearnRate7}
+\end{figure}
 
+It was found that the backproprogation algorithm commonly got stuck in local
+minima with low values for $\alpha$. An example of this is shown in
+figure~\ref{LowLearnRateLocalOptima1}. This resulted in a cost of 0.1249
+(clearly not the global minima given results produced with $\alpha=7.0$.
+This resulted in output values of:
+\begin{align}
+h_\Theta(x) &= \begin{bmatrix}
+            0.49219 \\
+            0.48469 \\
+            0.51343 \\
+            0.50444
+         \end{bmatrix}.
+\end{align}
 
+\begin{figure}
+    \caption{Cost function for $\alpha=0.001$}
+    \makebox[\textwidth]{\includegraphics[width=1\textwidth]{LowLearnRateLocalOptima1}}
+    \label{LowLearnRateLocalOptima1}
+\end{figure}
 
-localoptima1
-cost = 0.1249
-target output:0actual output0.49219
-target output:1actual output0.48469
-target output:1actual output0.51343
-target output:0actual output0.50444
+\subsection{Implement a different logical function, such as NOR}
+In order to implement a NOR function, the training output was updated to
+reflect the output of a NOR function for given inputs:
+\begin{lstlisting}
+training_set_input = [
+    0,0;
+    0,1;
+    1,0;
+    1,1
+];
+
+training_set_output = [
+    1; % previous value: 0
+    0; % previous value: 1
+    0; % previous value: 1
+    1  % previous value: 0
+];
+\end{lstlisting}
+
+Output from this updated implementation reflected these changes by generating
+the expected values:
+
+\begin{align}
+h_\Theta(x) &= \begin{bmatrix}
+            0.99265 \\
+            0.011811 \\
+            0.011848 \\
+            0.99052
+         \end{bmatrix}.
+\end{align}
 
 % \printbibliography
 \end{document}

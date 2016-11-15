@@ -46,6 +46,8 @@
     {\multicitedelim}
     {}
 
+\newcommand{\code}[1]{\texttt{#1}}
+
 % MATLAB Code block stuff...
 \usepackage{color}
 \usepackage{listings}
@@ -54,25 +56,28 @@
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 
 \lstset{language=Matlab,
-   keywords={break,case,catch,continue,else,elseif,end,for,function,
-      global,if,otherwise,persistent,return,switch,try,while},
-   basicstyle=\ttfamily,
-   keywordstyle=\color{blue},
-   commentstyle=\color{gray},
-   stringstyle=\color{dkgreen},
-   numbers=left,
-   numberstyle=\tiny\color{gray},
-   stepnumber=1,
-   numbersep=10pt,
-   backgroundcolor=\color{white},
-   tabsize=4,
-   showspaces=false,
-   showstringspaces=false}
-
+    keywords={break,case,catch,continue,else,elseif,end,for,function,
+        global,if,otherwise,persistent,return,switch,try,while},
+    basicstyle=\ttfamily,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{dkgreen},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=10pt,
+    backgroundcolor=\color{white},
+    tabsize=4,
+    showspaces=false,
+    showstringspaces=false
+    frame=single,
+    breaklines=true,
+    %postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}
+}
 \begin{document}
 \title{ECS707P - DSP}
 \subtitle{\LARGE{DSP Lab 2 Writeup}}
-\author{Sam Perry - ec16039}
+\author{Sam Perry - EC16039}
 
 \maketitle
 
@@ -98,4 +103,191 @@ function main()
     stem(x)
 \end{lstlisting}
 
+\begin{figure}[H]
+    \caption{\code{stem} Output Plot}
+    \makebox[\textwidth]{\includegraphics[width=\textwidth]{SineStem}}
+\end{figure}
+
+\section{Generating DFT using \code{fft}}
+
+\begin{lstlisting}
+% Main function for running exercises
+function main()
+    % Declare the number of samples in the sine wave
+    N = 32;
+    % Declare the sample rate
+    fs = 2048;
+    % Create indexes 1 - N
+    time = [0:N-1];
+    % Declare the frequency as 128Hz
+    frequency = 128;
+    % Declare the amplitude
+    amplitude = 1.0;
+
+    % Generate signal x from parameters
+    x = amplitude * sin(2*pi*frequency*(time/2048));
+
+    % Compute the DFT of the sine wave
+    X = fft(x);
+
+    % Create a new figure window
+    figure
+    % Take only the values < the nyquist frequency (1024)
+    X = abs(X)'
+    X = X(1:N/2)
+    % Plot the absolute magnitude of the DFT to a graph
+    stem(X);
+
+    % Turn on grid
+    grid on;
+    
+    % Add a title to the graph
+    title('DFT of x')
+    
+    % Create labels for x ticks
+    labels = 0:(fs/2)/(N/2):fs/2
+    % Setup x ticks
+    set(gca, 'XTick', 0:length(labels)); % Change x-axis ticks
+    set(gca, 'XTickLabel', labels); % Change x-axis ticks labels.
+    % Label the x axis as 'Frequency'
+    xlabel('Frequency (Hz)')
+    % Label the y axis as 'Magnitude'
+    ylabel('Magnitude |X|')
+\end{lstlisting}
+
+\section{What is the phase at the frequency 128 Hz?}
+The angle returned is -1.5708 ($\frac{-\pi}{2}$). This is because the
+difference between the sinusoid generated and the cosine of the same frequency
+at this bin is $\frac{-\pi}{2}$.
+
+\section{sample a sinusoid at 220 Hz at the same sampling rate}
+\begin{figure}[H]
+    \caption{\code{stem} Plot of a Sine Wave at 220Hz}
+    \makebox[\textwidth]{\includegraphics[width=\textwidth]{Sine220Stem}}
+\end{figure}
+
+\section{Draw a picture of what you hypothesize will be the magnitude DFT of
+this signal}
+It is expected that two frequency bins closest will have magnitudes $> 0$. This
+is because there is not frequency bin that represents 220Hz exactly and the
+bins either side will correlate a certain amount with the sinusoid.
+
+\section{Find the DFT of this signal and plot the magnitude of the result versus frequency}
+\begin{figure}[H]
+    \caption{32 Bin DFT of a Sine Wave at 220Hz}
+    \makebox[\textwidth]{\includegraphics[width=\textwidth]{DFT220}}
+\end{figure}
+
+\subsection{How does this plot compare to that in 1.2?}
+There is significant spectral content across all frequency bins, with a peak
+at bins around the frequency of the sinusoid generated. This contrasts the
+single peak of magnitude $\frac{N}{2}$ at the exact frequency of the sinusoid
+generated in section 1.2.
+\subsection{Was your hypothesized plot, created in 1.5, correct?}
+The hypothesized plot drawn in section 1.5 was partially correct. It predicted
+the dispersion of magnitude across the nearest frequency bins due to the lack
+of an exact bin for that frequency, however it did not anticipate the
+distribution of magnitudes across all frequency bins due to the discontinuity
+in signal as stated in the lab document.
+
+\section{Create a 512-length sequence of the sinusoid in equation (3) with a
+frequency of 220 Hz, amplitude of 1, and a sampling rate of 2,048 Hz}
+\begin{figure}[H]
+    \caption{\code{512 Bin DFT of a Sine Wave at 220Hz}}
+    \makebox[\textwidth]{\includegraphics[width=\textwidth]{DFT220_512}}
+\end{figure}
+
+\section{Comment the program, line-by- line, to describe what it is doing}
+\begin{lstlisting}
+% Main function for running exercises
+function main()
+    % Clear all previously defined variables
+    clear all
+    % Initialize string with name of sound file
+    sndfile = 'speech_female.wav';
+    % Read the audio samples of the sound file into matrix x and save the
+    % integer samplerate in variable Fs
+    [x,Fs] = audioread(sndfile);
+    % Set the variable N to 512
+    N = 512;
+
+    % Returns a matrix S, Frequency range F and Timestemp T for 1.4second of
+    % the input vector x. Argument 2 is the window size used for windows.
+    % Argument 3 is the fft size for each window. Larger values will results in
+    % a higher frequency resolution, lower values results in a better temporal
+    % resolution. Argument 4 is the sample rate of the signal x.
+    [S,F,T] = spectrogram(x(1:Fs*1.4),N,3*N/4,N*4,Fs);
+    % Generate a figure with set position and other display related parameters.
+    f = figure('Position',[500 300 700 500],'MenuBar','none', 'Units','Normalized');
+    % More display related settings...
+    set(f,'PaperPosition',[0.25 1.5 8 5]);
+    % same as above...
+    axes('FontSize',14);
+    % same as above...
+    colormap('jet');
+
+    % Display spectrogram over time T, with frequency in KHz. Matrix of values
+    % are converted to absolute magnitudes and scaled to decibels.
+    imagesc(T,F./1000,20*log10(abs(S)));
+    % Set labels of spectrogram image
+    axis xy; set(gca,'YTick',[0:2000:Fs/2]./1000,'YTickLabel',[0:2000:Fs/2]./1000);
+    ylabel('Frequency (kHz)'); xlabel('Time (s)');
+    print(gcf,'-depsc2','p2i1.eps');
+\end{lstlisting}
+
+\section{Subsection}
+\subsection{In what frequency band is most of the energy located?}
+For the majority of the sample, frequency of 5-6KHz and below are most
+prominent. The exception is during noisy phonemes where the energy is spread
+across higher frequencies.
+\subsection{Knowing the Nyquist-Shannon Sampling Theorem, at what minimum rate
+    would you sample this signal such that it could be reconstructed well—but
+not exactly?}
+From visual inspection, it may be possible to reconstruct the sound to an
+intelligible degree at a sample rate of around 11KHz. It may be possible to
+lower this further.
+
+\section{Which sounds of which words correspond to the energy between 4 and 18
+kHz?} These frequency ranges contain the most energy during sibilant phonemes.
+This is clearly demonstrated in the word ``administer'' at the `s'.
+
+\section{What is the highest decimation factor you think this signal can
+    withstand and you can still understand the speech? What would the sampling
+rate be at that factor?}
+A decimation factor 6 was found to be the highest factor that was still
+intelligible. This results in a sample rate of 7350Hz.
+
+\section{Do it. Include your code. Include your observations.}
+\begin{lstlisting}
+% Main function for running exercises
+function main()
+    % Clear all previously defined variables
+    clear all
+    % Initialize string with name of sound file
+    sndfile = 'speech_female.wav';
+    % Read the audio samples of the sound file into matrix x and save the
+    % integer samplerate in variable Fs
+    [x,Fs] = audioread(sndfile);
+    % Set the variable N to 512
+    
+    % Set decimation factor
+    decimation_factor = 16;
+    % Pick every $decimation_factor samples
+    x = x(1:decimation_factor:length(x));
+    % Set sample rate accordingly
+    Fs = Fs / decimation_factor;
+    % Play sound.
+    sound(x(1:Fs*1.4), Fs);
+    return;
+\end{lstlisting}
+
+Decimation is applied by simply taking every nth sample. A more sophisticated
+approach would be to apply a low pass filter to the audio before decimation in
+order to avoid aliasing.
+
+\section{Say you have an animal that needs medicine. Knowing what you know now,
+how would you administer said medicine?}
+Although it is a very difficult matter, the simplest method is to mix the
+medicine with butter, or some other grease, and smear it on the nose of the
+animal from time to time...
 \end{document}

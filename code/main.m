@@ -41,37 +41,40 @@ function main()
     sine_win = sin(pi*(0:N-1)/(N-1));
     hann_win = 0.5*(1-cos(2*pi*(0:N-1)/(N-1)));
     figure;
-    X = fft(tri_win, 1024);
-    X = abs(X);
-    X = fftshift(X);
-    subplot(2,2,1)
-    plot(X)
-    title('Triangle')
-    axis([0, 1024, 0, inf]);
-
-    X = fft(rect_win, 1024);
-    X = abs(X);
-    X = fftshift(X);
-    subplot(2,2,2)
-    plot(X)
-    title('Rectangle')
-    axis([0, 1024, 0, inf]);
-
     X = fft(sine_win, 1024);
-    X = abs(X);
     X = fftshift(X);
-    subplot(2,2,3)
-    plot(X)
-    title('Sine')
-    axis([0, 1024, 0, inf]);
+    X = 20*log10(abs(X)/max(abs(X)));
+    max(X(437:460))
 
-    X = fft(hann_win, 1024);
-    X = abs(X);
-    subplot(2,2,4)
-    X = fftshift(X);
+    % [m, im] = min(X(459:467));
+    % %op1 = (im + 459) / 1024.;
+    % op1 = im + 459
+    % [m, im] = min(X(556:568));
+    % %op2 = (im + 556) /1024.;
+    % op2 = im + 556
+    % op2 - op1
+
     plot(X)
-    title('Hann')
-    axis([0, 1024, 0, inf]);
+    hold on;
+    axis([int64((1024/2.)-(1024*0.2)), int64((1024/2.)+(1024*0.2)), -80, 5]);
+    X = fft(hann_win, 1024);
+    X = 20*log10(abs(X)/max(abs(X)));
+    X = fftshift(X);
+    max(X(418:445))
+    % [m, im] = min(X(446:457));
+    % %op1 = (im + 446) / 1024.;
+    % op1 = im + 446;
+    % [m, im] = min(X(574:584));
+    % %op2 = (im + 574) /1024.;
+    % op2 = im + 574;
+    % op2 - op1
+
+    plot(X, '--r')
+    %axis([-0.2, 0.2, -80, 5]);
+    set(gca,'XTickMode','manual');
+    set(gca,'XTick',int64([(1024/2.)-(1024*0.2), 512, (1024/2.)+(1024*0.2)]));
+    set(gca,'XtickLabels', [-0.2, 0, 0.2]);
+    legend('Sine','Hann')
     return;
 
     hold on;

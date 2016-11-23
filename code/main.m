@@ -57,6 +57,8 @@ function plot_windowed_signal(sig, win, Fs, plot_ind)
     plot(n(1:(end/2)+1), X(1:(end/2)+1))
     grid on;
 
+    xlabel('Frequency (Hz)')
+    ylabel('Magnitude (dB)')
     % Set axis ticks
     set(gca,'XTickMode','manual');
     set(gca,'XTick',0:64:N-1);

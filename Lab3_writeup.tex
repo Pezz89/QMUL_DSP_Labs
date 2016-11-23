@@ -76,12 +76,12 @@
 \begin{document}
 \title{ECS707P - DSP}
 \subtitle{\LARGE{Lab 3}}
-\author{Sam Perry - ec16039}
+\author{Sam Perry - EC16039}
 
 \maketitle
 
 \section{Using 32 samples of a sinusoid with frequency 220 Hz, sampled at a
-constant rate of 2,048 Hz, zeropad it to a total length of 1024 samples and
+constant rate of 2,048 Hz, zero pad it to a total length of 1024 samples and
 calculate the DFT of the result. Plot this using a line, and overlay this with
 a stem plot of the DFT of the original 32 samples.}
 \begin{lstlisting}
@@ -159,7 +159,7 @@ Hz and run it again. Include just the plot and comment on what has happened.}
 \end{figure}
 
 The extra lobes that can be seen in the 2048 point DFT are a result of the
-zeropadding applied to the signal. By adding zeros to the signal, a rectangular
+zero padding applied to the signal. By adding zeros to the signal, a rectangular
 window is effectively applied to the signal, causing a discontinuity in the
 signal. This produces the lobes that appear in the 2048 point DFT shown.
 \pagebreak
@@ -167,7 +167,7 @@ signal. This produces the lobes that appear in the 2048 point DFT shown.
     is a sum of the following three
     sinusoids:
     $$x[n]=sin(2\pi128n\div2048)+0.2sin(2\pi220n\div2048)+0.01cos(2\pi525n\div2048)$$
-    Also find the DFT of the signal zeropadded to a length 2048. Overlay
+    Also find the DFT of the signal zero padded to a length 2048. Overlay
     theDFT spectrum of length-32 using stem, with the zero-padded DFT
     spectrum€using plot, an example of which is seen in Figure 5. Include
 just your plot.}
@@ -184,7 +184,7 @@ spectrum?}
 The 128Hz sine wave can be seen as the largest peak in the magnitude spectrum.
 However, the other tones are much harder to distinguish. Their lobes are merged
 into the lobes of the other tones and as their amplitude is not significantly
-high, they become unrecongisable as tones.
+high, they become unrecognisable as tones.
 
 \section{Program the four windows above. Using N=31 for the triangular
 window, and N=32 for the others, plot each window on the same graph (using plot
@@ -218,8 +218,8 @@ rectangular and triangular window functions (1-2), on the same graph}
 width of the main-lobe for the triangular window in terms of that for the
 rectangular window? Do you have any intuition why this is the case?} The width
 of the rectangular window is half that of the triangular window. The triangular
-window weights samples by linearly decrasing values symetrically around the
-signal's center, resulting in an increased reduction in side lobe magnitude as
+window weights samples by linearly decreasing values symmetrically around the
+signal's centre, resulting in an increased reduction in side lobe magnitude as
 distance increases from the main lobe. This comes at the cost of an increased
 (doubled) main lobe size. 
 
@@ -237,7 +237,7 @@ the rectangular window.
 
 \section{What is the width of the main-lobe for the Sine and Hann window?}
 The width of the sine window main lobe is 0.0977 (100 samples)\\
-The width of the hann window main love is 0.1289 (132 samples)
+The width of the Hann window main love is 0.1289 (132 samples)
 
 \section{At what magnitude (dB) is the height of the first side-lobe for the
 Sine andHann window?}
@@ -248,7 +248,7 @@ The magnitude of the first side lobe for the Hann window is: -31.47dB
 triangular, Sine, and Hann windows. Plot each spectrum (four plots) using
 stem (not in dB). Plot the normalized magnitude of each one
 (abs(X)./max(abs(X))). This time do not use fftshift. Use the proper
-frequency indicies, i.e., f = n*Fs/N. Plot only the frequencies between 0 and
+frequency indices, i.e., f = n*Fs/N. Plot only the frequencies between 0 and
 the Nyquist frequency.}
 
 \begin{lstlisting}
@@ -323,7 +323,7 @@ function plot_windowed_signal(sig, win, Fs, plot_ind)
     \label{WindowedSigDFT}
 \end{figure}
 
-\section{For each of the windowed signals in 3.1, zeropad each sequence to
+\section{For each of the windowed signals in 3.1, zero pad each sequence to
 length 2,048}
 \begin{lstlisting}
 function plot_windowed_signal(sig, win, Fs, plot_ind)
@@ -362,6 +362,37 @@ function plot_windowed_signal(sig, win, Fs, plot_ind)
     \label{WindowedSigDFT2048}
 \end{figure}
 
+\section{Knowing how the main-lobes depend on the type of window, and how
+the side-lobes decay, for which of these windows can you say with
+certainty that this signal has three components?}
+All three components can be seen in the triangular window. The second component
+can be seen as the second lobe of the plot is significantly higher than the
+-26dB of a side lobe of a triangular window. The third component can be seen as
+the small raised lobe at around 448Hz. This suggests that a content exists
+around this frequency other than the spectral leakage. 
+The same is true of the sine window, however the peaks are significantly more
+prominent above the leakage. This is further emphasized in the Hann window.
+The rectangle window is the only window for which the third component cannot be
+distinguished from the spectral leakage.
 
+\section{For which windows can you say with accuracy the frequency of the
+middle amplitude sinusoid?}
+The Rectangle window performs most accurately in this regard. The second peak
+is sharpest at around 220Hz as expected. Increased main lobe size decreases the
+accuracy of other windows. This demonstrates the trade-off between lobe size and
+prominence of lobes over spectral leakage.
+
+\section{Why are the Sine and Hann windows good at revealing the
+lowest amplitude component, but not the middle amplitude component?}
+As the Sine and Hann windows have a high dynamic range, they can be used to
+distinguish components of low amplitude in isolation. However the second
+component, although higher in amplitude, is close to the first component, and
+is therefore partially masked by the spectral leakage created by it.
+
+\section{Why should the lowest amplitude component have a normalized dB
+level of –40 dB?}
+Because the amplitude of the third component (0.01) in normalized dB relative
+to 1 is calculated at -40 as shown: 
+$$20\text{log}_{10}\Bigg(\frac{0.01}{1}\Bigg) = -40$$
 
 \end{document}

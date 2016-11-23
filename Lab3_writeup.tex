@@ -242,7 +242,125 @@ The width of the hann window main love is 0.1289 (132 samples)
 \section{At what magnitude (dB) is the height of the first side-lobe for the
 Sine andHann window?}
 The magnitude of the first side lobe for the Sine window is: -22.90dB\\
-The magnitude of the first side lobe for the Hann window is: -31.4689dB
+The magnitude of the first side lobe for the Hann window is: -31.47dB
+
+\section{Window the 32-sample sequence created in 1.3 with the rectangular,
+triangular, Sine, and Hann windows. Plot each spectrum (four plots) using
+stem (not in dB). Plot the normalized magnitude of each one
+(abs(X)./max(abs(X))). This time do not use fftshift. Use the proper
+frequency indicies, i.e., f = n*Fs/N. Plot only the frequencies between 0 and
+the Nyquist frequency.}
+
+\begin{lstlisting}
+% Main function for running exercises
+function main()
+    % Declare the number of samples in the sine wave
+    N = 32;
+    % Declare the sample rate
+    fs = 2048;
+    % Create indexes 1 - N
+    time = [0:N-1];
+    % Declare the frequency as 128Hz
+    frequency = 128;
+    % Declare the amplitude
+    amplitude = 1.0;
+
+    % Generate signal x from parameters
+    x = 1*sin(2*pi*128*(time/fs)) + 0.2*sin(2*pi*220*(time/fs)) + ...
+    0.01*cos(2*pi*525*(time/fs));
+
+    % Generate triangle, rectangle, sine and hann windows based on formulas
+    % provided
+    N = 32;
+    tri_win = (((N-1.0)/2.0)-abs((0:N-1)-((N-1.0)/2.0)))*(2.0/(N-1.0));
+    rect_win = ones(1, N);
+    sine_win = sin(pi*(0:N-1)/(N-1));
+    hann_win = 0.5*(1-cos(2*pi*(0:N-1)/(N-1)));
+
+    figure;
+    plot_windowed_signal(x, rect_win, fs, 1);
+    title('Rectrangle')
+    plot_windowed_signal(x, tri_win, fs, 2);
+    title('Triangle')
+    plot_windowed_signal(x, sine_win, fs, 3);
+    title('Sine')
+    plot_windowed_signal(x, hann_win, fs, 4);
+    title('Hann')
+
+
+function plot_windowed_signal(sig, win, Fs, plot_ind)
+    sig = sig .* win;
+    
+    % Compute the DFT of the sine wave
+    X = fft(sig);
+
+    % Calculate normalized absolute magnitudes
+    X = abs(X)./max(abs(X));
+
+    % Calculate DFT indexes
+    n = 0:length(sig)-1
+    % Get DFT size
+    N = length(n)
+    % Calculate bin frequencies
+    f = (n*Fs)/N
+
+    % Create subplot
+    subplot(2,2,plot_ind);
+    hold on;
+    % Plot DFT to the nyquist frequency
+    stem(n(1:(end/2)+1), X(1:(end/2)+1))
+    grid on;
+
+    % Set axis ticks
+    set(gca,'XTickMode','manual');
+    set(gca,'XTick',0:N-1);
+    set(gca,'XtickLabels', f);
+\end{lstlisting}
+
+\begin{figure}[H]
+    \caption{Normalized Magnitudes of 3 Tone Signal (DFT Size = 32)}
+    \makebox[\textwidth]{\includegraphics[width=1.1\textwidth]{WindowedSigDFT}}
+    \label{WindowedSigDFT}
+\end{figure}
+
+\section{For each of the windowed signals in 3.1, zeropad each sequence to
+length 2,048}
+\begin{lstlisting}
+function plot_windowed_signal(sig, win, Fs, plot_ind)
+    sig = sig .* win;
+    
+    % Compute the DFT of the sine wave
+    X = fft(sig, 2048);
+
+    % Calculate normalized absolute magnitudes
+    X = 20*log10(abs(X)/max(abs(X)));
+
+    % Calculate DFT indexes
+    n = 0:length(X)-1
+    % Get DFT size
+    N = length(n)
+    % Calculate bin frequencies
+    f = (n*Fs)/N
+
+    % Create subplot
+    subplot(2,2,plot_ind);
+    hold on;
+    % Plot DFT to the nyquist frequency
+    plot(n(1:(end/2)+1), X(1:(end/2)+1))
+    grid on;
+
+    % Set axis ticks
+    set(gca,'XTickMode','manual');
+    set(gca,'XTick',0:64:N-1);
+    set(gca,'XtickLabels', f(1:64:end));
+    axis([0, 1024, -80, 5])
+\end{lstlisting}
+
+\begin{figure}[H]
+    \caption{Normalized Magnitudes of 3 Tone Signal (DFT Size = 2048)}
+    \makebox[\textwidth]{\includegraphics[width=1.1\textwidth]{WindowedSigDFT2048}}
+    \label{WindowedSigDFT2048}
+\end{figure}
 
 
 
